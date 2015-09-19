@@ -23,16 +23,20 @@ class Client:
         self.conn = HTTPSConnection(self.domain)
 
     def request(self, uri):
-        self.headers['cookie'] = 'persistant_customer_token={id};'.format(id=self.getSessionId())
+        sessionId = self.getSessionId()
+        self.headers['cookie'] = 'persistant_customer_token={id};'.format(id=sessionId)
         self.conn.request('GET', uri, '', self.headers)
         response = self.conn.getresponse()
         html = response.read()
-        html = html.decode('utf-8')
+        html = html.decode('utf-8') # is this even necessary
         self.conn.close()
 
         return html
 
     def getSessionId(self):
+        if self.sessionId is not None:
+            return self.sessionId
+
         cookies = self._getSessionCookies()
         match = re.search('persistant_customer_token=([^;]+)', cookies)
         if match:
@@ -40,6 +44,9 @@ class Client:
 
         return None
 
+    # Use for setting mocks
+    def setConn(self, conn):
+        self.conn = conn
 
     def _getSessionCookies(self):
         # return 'PHPSESSID=04g6qe180ibng685h6cq5d3vo3; path=/, persistant_customer_token=8e853fe1ce26bb526f83049b3588f55826e8bda9; expires=Mon, 29-Aug-2016 15:00:53 GMT; Max-Age=31104000; path=/'

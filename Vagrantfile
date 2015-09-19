@@ -1,7 +1,7 @@
 Vagrant.configure(2) do |config|
   config.vm.box = "ubuntu/trusty64"
   config.vm.network :forwarded_port, host: 4567, guest: 80
-  config.vm.synced_folder "./recipecrawler", "/home/vagrant/src/recipecrawler/"
+  config.vm.synced_folder ".", "/home/vagrant/src/RecipeCrawler/"
 
   config.vm.provision "shell", inline: <<-SHELL
     # Change to python3 as default
@@ -16,5 +16,9 @@ Vagrant.configure(2) do |config|
     sudo python setup.py install
     cd ..
     rm -r PyYAML-3.11/ PyYAML-3.11.tar.gz
+
+    # install setuptools
+    wget https://bootstrap.pypa.io/ez_setup.py -O - | sudo python
+    sudo rm setuptools*.zip
   SHELL
 end

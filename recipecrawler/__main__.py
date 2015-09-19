@@ -4,7 +4,7 @@ import client
 import crawler
 
 def get_config_values():
-    currentDir = os.path.dirname(os.path.abspath(__file__))
+    currentDir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     configPath = '{0}{1}'.format(currentDir, '/config/main.yaml')
     configHandler = open(configPath, 'r')
 

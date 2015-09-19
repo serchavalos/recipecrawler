@@ -1,0 +1,6 @@
+.vagrant
+
+__pycache__
+*.pyc
+build/
+config/main.yaml

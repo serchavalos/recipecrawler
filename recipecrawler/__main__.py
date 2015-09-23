@@ -5,11 +5,11 @@ import crawler
 
 """
 UPDATE:
-- Finally it fetches menu from the first page
+- HTTPSConn finally replace with requests
 
 TODO:
-- Unit tests (`python setup.py test`) are broken because it's doing real requests (yikes!)
 - Create "a proper" menu object
+- Add logic for fetching more menus
 """
 
 def get_config_values():

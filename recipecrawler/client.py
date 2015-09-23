@@ -1,9 +1,7 @@
 import re, pprint, requests
 
-from http.client import HTTPSConnection
-
 class Client:
-    conn = None
+    requests = None
     params = None
     headers = None
     domain= None
@@ -11,6 +9,7 @@ class Client:
 
     def __init__(self, username, password, domain):
         self.domain = domain
+        self.requests = requests
         self.params = 'username={username}&password={password}'.format(username=username, password=password)
         self.headers = {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -19,15 +18,13 @@ class Client:
             'Referer': 'https://' + self.domain,
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.85 Safari/537.36'
         }
-        # TODO: Replace HTTPSConnection with `requests` object (we tried to replace it once but we failed miserably)
-        self.conn = HTTPSConnection(self.domain)
 
     def request(self, uri):
         sessionId = self.getSessionId()
         self.headers['cookie'] = 'persistant_customer_token={id};'.format(id=sessionId)
 
         url = 'https://%s%s' % (self.domain, uri)
-        response = requests.get(url, headers=self.headers)
+        response = self.requests.get(url, headers=self.headers)
         html = response.text
 
         return html
@@ -43,15 +40,14 @@ class Client:
 
         return None
 
-    def setConn(self, conn):
+    def setRequests(self, requests):
         """ Used for mocking """
-        self.conn = conn
+        self.requests = requests
 
     def _getSessionCookies(self):
         # return 'PHPSESSID=04g6qe180ibng685h6cq5d3vo3; path=/, persistant_customer_token=8e853fe1ce26bb526f83049b3588f55826e8bda9; expires=Mon, 29-Aug-2016 15:00:53 GMT; Max-Age=31104000; path=/'
 
-        self.conn.request('POST', '/utility', self.params, self.headers)
-        response = self.conn.getresponse()
-        cookies = response.getheader('Set-Cookie')
-        self.conn.close()
-        return cookies
+        url = 'https://%s%s' % (self.domain, '/utility')
+        res = self.requests.post(url, data=self.params, json=None, headers=self.headers, allow_redirects=False)
+
+        return res.headers['set-cookie']

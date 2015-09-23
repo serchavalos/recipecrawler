@@ -23,12 +23,11 @@ class TestClient(TestCase):
         self.assertEqual(self.client.getSessionId(), '12345')
 
     def __get_connection_mock(self):
-        mockResponse = Mock()
         attrs = {
             'getheader.return_value': 'persistant_customer_token=%s;' % self.COOKIE_VALUE,
             'read.return_value': self.HTML_DOC
         }
-        mockResponse.configure_mock(**attrs)
+        mockResponse.Mock(**attrs)
 
         mockConn = Mock()
         attrs = {'getresponse.return_value': mockResponse}

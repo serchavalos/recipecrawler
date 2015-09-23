@@ -1,5 +1,4 @@
-import re
-import pprint
+import re, pprint, requests
 
 from http.client import HTTPSConnection
 
@@ -20,16 +19,16 @@ class Client:
             'Referer': 'https://' + self.domain,
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.85 Safari/537.36'
         }
+        # TODO: Replace HTTPSConnection with `requests` object (we tried to replace it once but we failed miserably)
         self.conn = HTTPSConnection(self.domain)
 
     def request(self, uri):
         sessionId = self.getSessionId()
         self.headers['cookie'] = 'persistant_customer_token={id};'.format(id=sessionId)
-        self.conn.request('GET', uri, '', self.headers)
-        response = self.conn.getresponse()
-        html = response.read()
-        html = html.decode('utf-8') # is this even necessary
-        self.conn.close()
+
+        url = 'https://%s%s' % (self.domain, uri)
+        response = requests.get(url, headers=self.headers)
+        html = response.text
 
         return html
 
@@ -44,8 +43,8 @@ class Client:
 
         return None
 
-    # Use for setting mocks
     def setConn(self, conn):
+        """ Used for mocking """
         self.conn = conn
 
     def _getSessionCookies(self):

@@ -1,7 +1,16 @@
-import os, sys, yaml
+import os, sys, yaml, json
 
 import client
 import crawler
+
+"""
+UPDATE:
+- Finally it fetches menu from the first page
+
+TODO:
+- Unit tests (`python setup.py test`) are broken because it's doing real requests (yikes!)
+- Create "a proper" menu object
+"""
 
 def get_config_values():
     currentDir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -16,8 +25,8 @@ if __name__ == '__main__':
 
     client = client.Client(config['username'], config['password'], config['domain'])
     crawler = crawler.Crawler(client)
-    receiptHtml = crawler.fetchMenuPage()
+    menuPaths = crawler.getMenuPaths()
+    menuObj = crawler.getSingleMenu(menuPaths[0])
 
-    fileHandler = open('receipt.html', 'w')
-    fileHandler.write(receiptHtml)
-    fileHandler.close()
+    print(json.dumps(menuObj, indent=4, sort_keys=True))
+

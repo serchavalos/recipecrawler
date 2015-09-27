@@ -1,22 +1,21 @@
 import bs4
 
+from recipe import Recipe, RecipeFactory
+
 class Crawler:
     client = None
     scrapper = None
+    recipe_factory = None
 
     def __init__(self, client):
         self.client = client
         self.scrapper = bs4.BeautifulSoup
+        self.recipe_factory = RecipeFactory()
 
     def getSingleMenu(self, path):
-        # TODO: Here is where you create your menu object!!!
-
         menuPage = self.client.request(path)
-        soup = self.scrapper(menuPage, 'html.parser')
-        ingredientObjs = soup.select('div#ingredients ul > li')
-        ingredients = [obj.getText() for obj in ingredientObjs]
-
-        return {'ingredients': ingredients}
+        recipe = self.recipe_factory.from_html(menuPage)
+        return recipe
 
     def getMenuPaths(self):
         menusPage = self.client.request('/mina-sidor/menyblad-recept?limit=10')
@@ -24,7 +23,3 @@ class Crawler:
         linksObjs = soup.select('div.menu-recipes a[href^="/mina-sidor/recept/"]')
         paths = [link.attrs.get('href') for link in linksObjs]
         return paths
-
-    def setScrapper(self, scrapper):
-        """ Used for mocking dependencies """
-        self.scrapper = scrapper

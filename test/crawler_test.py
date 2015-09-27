@@ -34,44 +34,20 @@ class CrawlerTest(TestCase):
         self.assertEqual(paths, expected)
 
     def test_getSingleMenu(self):
-        htmlFixture = """
-        <body>
-          <div id="ingredients">
-            <ul>
-              <li>apples</li>
-              <li>bananas</li>
-              <li>pears</li>
-            </ul>
-          </div>
-          <div id="ingredients">
-            <ul>
-              <li>potatoes</li>
-              <li>carrots</li>
-              <li>onions</li>
-            </ul>
-          </div>
-        </body>
-        """
-        listFixture = [
-            Mock(**{'getText.return_value': 'apples'}),
-            Mock(**{'getText.return_value': 'bananas'}),
-            Mock(**{'getText.return_value': 'pears'}),
-        ]
-        soupMock = Mock(**{'select.return_value': listFixture})
-
-        scrapperMock = Mock(return_value=soupMock)
-
+        recipeExpected = {'ingredients':['apples', 'bananas', 'pears']}
+        recipeMock = Mock(**{'to_json.return_value': recipeExpected})
+        recipeFactoryMock = Mock(**{'from_html.return_value': recipeMock})
         clientMock = Client(**self.attrs)
-        clientMock.request = MagicMock(return_value=htmlFixture)
+        clientMock.request = MagicMock(return_value='<html></html>')
 
         crawler = Crawler(clientMock)
-        crawler.setScrapper(scrapperMock)
+        crawler.recipe_factory = recipeFactoryMock
 
-        menuObj = crawler.getSingleMenu('/test/path')
-        expected = {'ingredients':['apples', 'bananas', 'pears']}
+        recipe = crawler.getSingleMenu('/test/path')
+        expected = recipe.to_json()
 
-        self.assertEqual(menuObj, expected)
+        self.assertEqual(recipeExpected, expected)
 
         clientMock.request.assert_called_with('/test/path')
-        scrapperMock.assert_called_with(htmlFixture, 'html.parser')
-        soupMock.select.assert_called_with('div#ingredients ul > li')
+        recipeFactoryMock.from_html.assert_called_with('<html></html>')
+        recipeFactoryMock.to_json.assert_called()

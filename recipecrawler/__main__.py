@@ -5,11 +5,11 @@ import crawler
 
 """
 UPDATE:
-- HTTPSConn finally replace with requests
+- Recipe object created
 
 TODO:
-- Create "a proper" menu object
 - Add logic for fetching more menus
+- Add a pre-commit hook that runs unit tests
 """
 
 def get_config_values():
@@ -26,7 +26,7 @@ if __name__ == '__main__':
     client = client.Client(config['username'], config['password'], config['domain'])
     crawler = crawler.Crawler(client)
     menuPaths = crawler.getMenuPaths()
-    menuObj = crawler.getSingleMenu(menuPaths[0])
+    recipe = crawler.getSingleMenu(menuPaths[0])
 
-    print(json.dumps(menuObj, indent=4, sort_keys=True))
+    print(json.dumps(recipe.to_json(), indent=4, sort_keys=True))
 

@@ -22,7 +22,7 @@ class RecipeFactory:
     patterns = {
         'title': ('div.content h1', 'text'),
         'image': ('div#recipe_image img', 'src'),
-        'calories': ('#instructions .cal-info', 'text'),
+        'calories': ('.content .cal-info', 'text'),
         'ingredients': ('#ingredients li', 'text'),
         'instructions': ('#instructions ol > li', 'text')
     }

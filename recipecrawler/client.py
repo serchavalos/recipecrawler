@@ -51,3 +51,4 @@ class Client:
         res = self.requests.post(url, data=self.params, json=None, headers=self.headers, allow_redirects=False)
 
         return res.headers['set-cookie']
+

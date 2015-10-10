@@ -28,5 +28,5 @@ if __name__ == '__main__':
     menuPaths = crawler.getMenuPaths()
     recipe = crawler.getSingleMenu(menuPaths[0])
 
-    print(json.dumps(recipe.to_json(), indent=4, sort_keys=True))
+    print(json.dumps(recipe.to_json(), indent=4, sort_keys=True, ensure_ascii=False))
 

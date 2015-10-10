@@ -18,6 +18,7 @@ class Crawler:
         return recipe
 
     def getMenuPaths(self):
+        # TODO: An exception should be triggered if client can connect
         menusPage = self.client.request('/mina-sidor/menyblad-recept?limit=10')
         soup = self.scrapper(menusPage, 'html.parser')
         linksObjs = soup.select('div.menu-recipes a[href^="/mina-sidor/recept/"]')

@@ -1,11 +1,10 @@
 import os, sys, yaml, json
 
-import client
-import crawler
+from client import Client
+from crawler import Crawler
 
 """
 UPDATE:
-- Recipe object created
 
 TODO:
 - Add logic for fetching more menus
@@ -23,10 +22,34 @@ def get_config_values():
 if __name__ == '__main__':
     config = get_config_values()
 
-    client = client.Client(config['username'], config['password'], config['domain'])
-    crawler = crawler.Crawler(client)
-    menuPaths = crawler.getMenuPaths()
-    recipe = crawler.getSingleMenu(menuPaths[0])
+    totalMenus = 10
+    stepSize = 5
+    menus = []
+    offset = 0
 
-    print(json.dumps(recipe.to_json(), indent=4, sort_keys=True, ensure_ascii=False))
+    client = Client(config['username'], config['password'], config['domain'])
+    crawler = Crawler(client)
+
+    while (len(menus) < totalMenus) {
+        menuPaths = crawler.getMenuPaths(stepSize, offset)
+
+        for(path in menuPaths):
+            recipe = crawler.getSingleMenu(path)
+            menus.append(recipe)
+
+        offset += stepSize
+    }
+
+    # print(json.dumps(recipe.to_json(), indent=4, sort_keys=True, ensure_ascii=False))
+    print ('Menus processed: %s' % (len(menus)))
+
+    print ('Writing on cache file...')
+    cacheFile = open('recipes.json', '+w')
+    for (menu in menus):
+        cacheFile.write(menu.to_json())
+
+    cacheFile.close()
+
+    print ('Completed')
+
 

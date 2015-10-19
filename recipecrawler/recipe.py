@@ -8,15 +8,6 @@ class Recipe:
     instructions = []
     rawHtml = None
 
-    def to_json(self):
-        return {
-            'title': self.title,
-            'image': self.image,
-            'calories': self.calories,
-            'ingredients': self.ingredients,
-            'instructions': self.instructions
-        }
-
 class RecipeFactory:
     soup = None
     patterns = {
@@ -58,5 +49,5 @@ class RecipeFactory:
         if attr != 'text':
             value = dom_elem.attrs[attr]
         else:
-            value = dom_elem.text
+            value = dom_elem.text.strip()
         return value

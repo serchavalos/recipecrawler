@@ -1,6 +1,6 @@
 import bs4
 
-from recipecrawler.recipe import Recipe, RecipeFactory
+from recipe import Recipe, RecipeFactory
 
 class Crawler:
     client = None
